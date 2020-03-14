@@ -1,13 +1,13 @@
 puts "Введите коэфицент a:"
-a_coef = gets.chomp.to_i
+a_coef = gets.chomp.to_f
 
 puts "Введите коэфицент b:"
-b_coef = gets.chomp.to_i
+b_coef = gets.chomp.to_f
 
 puts "Введите коэфицент c:"
-c_coef = gets.chomp.to_i
+c_coef = gets.chomp.to_f
 
-discriminant = b_coef**2-4*a_coef*c_coef
+discriminant = b_coef**2 - 4 * a_coef * c_coef
 
 if discriminant > 0
   root = Math.sqrt (discriminant)
