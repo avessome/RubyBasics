@@ -13,8 +13,6 @@ month = {
     December: 31
 }
 
-month.each do |name, value|
-  if value == 30
-    puts "#{name} : #{value}"
-  end
+month.each do |month, days|
+    puts "#{ month } : #{ days }" if days == 30
 end

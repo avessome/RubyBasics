@@ -1,9 +1,2 @@
-array = []
-a = 1
-
-while a < 100
-  array << a
-  a += 5
-end
-
+array = (10..100).step(5).to_a
 puts array
