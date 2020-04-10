@@ -64,7 +64,6 @@ class Railway
     arr.any? { |elem| elem.name == name.to_s }
   end
 
-  # Метод create_station создаёт станцию.
   def create_station
     message = ['Введите название станции:']
     name = data_input(message).first
@@ -293,8 +292,6 @@ class Railway
   def list_stations
     @stations.each_with_index { |elem, index| puts "#{index + 1}.#{elem.name}" }
   end
-
-
 
   def take_the_place_wagon
     return if @trains.size.zero?

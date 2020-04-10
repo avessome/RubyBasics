@@ -5,8 +5,7 @@ class CargoWagon < Wagon
 
   def takes_volume(capacity)
     return if capacity <= 0 || capacity > @capacity
-
-    @capacity -= capacity
+    
     @occupied += capacity
   end
 end
