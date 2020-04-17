@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# documentation comment
 class Railway
   HASH = { '1' => :create_station, '2' => :create_train_pass,
            '3' => :create_train_cargo, '4' => :create_wagon_pass,
@@ -80,8 +83,8 @@ class Railway
     puts 'Успешно!'
   end
 
-  def error_message(e)
-    puts e
+  def error_message(err)
+    puts err
   end
 
   def create_train_pass

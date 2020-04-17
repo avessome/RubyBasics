@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# documentation comment
 class CargoTrain < Train
   def initialize(name)
     super name, 'cargo'

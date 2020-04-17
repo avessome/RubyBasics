@@ -1,20 +1,24 @@
+# frozen_string_literal: true
+
+# documentation comment
 require_relative 'instance_counter'
 require_relative 'module_company'
 
+# documentation comment
 class Train
   include Company
   include InstanceCounter
 
-  NUMBER_FORMAT = /^[a-z\d]{3}-*[a-z\d]{2}$/i
-  @@trains = {}
+  NUMBER_FORMAT = /^[a-z\d]{3}-*[a-z\d]{2}$/i.freeze
+  @trains = {}
 
   def self.find(name)
-    @@trains[name]
+    @trains[name]
   end
 
   attr_reader :name, :type, :wagons, :current_station, :current_speed
   def initialize(name, type)
-    @@trains[name] = self
+    @trains[name] = self
     @name = name.to_s
     validate!
     @type = type

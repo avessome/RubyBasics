@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# documentation comment
 require_relative 'train'
 require_relative 'route'
 require_relative 'wagon'

@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
+# documentation comment
 require_relative 'module_company'
 
+# documentation comment
 class Wagon
   include Company
   attr_reader :type, :capacity, :free_capacity

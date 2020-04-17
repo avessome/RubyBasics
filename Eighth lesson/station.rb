@@ -1,17 +1,21 @@
+# frozen_string_literal: true
+
+# documentation comment
 require_relative 'instance_counter'
 
+# documentation comment
 class Station
   include InstanceCounter
 
-  @@all_stations = []
+  @all_stations = []
 
   def self.all
-    @@all_stations
+    @all_stations
   end
 
   attr_reader :trains, :name
   def initialize(name)
-    @@all_stations << self
+    @all_stations << self
     @name = name
     validate!
     @trains = []

@@ -1,5 +1,9 @@
+# frozen_string_literal: true
+
+# documentation comment
 require_relative 'instance_counter'
 
+# documentation comment
 class Route
   include InstanceCounter
   attr_reader :stations
