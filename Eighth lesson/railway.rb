@@ -9,8 +9,10 @@ class Railway
            '10' => :add_station, '11' => :delete_midway,
            '12' => :add_route_train, '13' => :move_forwards,
            '14' => :move_backwards, '15' => :list_stations,
-           '16' => :ist_trains_station, '17' => :list_wagons_train,
-           '18' => :take_the_place_wagon }.freeze
+           '16' => :list_trains_station, '17' => :list_wagons_train,
+           '18' => :take_the_place_wagon, '19' => :paint_the_wagon,
+           '20' => :current_color_wagon, '21' => :history_colors_wagon,
+           '22' => :add_class_wagon, '23' => :add_engine_type }.freeze
 
   attr_reader :routes, :trains, :wagons, :stations
   def initialize
@@ -41,6 +43,11 @@ class Railway
                 ' 16 - Посмотреть список поездов на станции.',
                 ' 17 - Посмотреть список вагонов у поезда.',
                 ' 18 - Наполнить вагон.',
+                ' 19 - Изменить цвет вагона.',
+                ' 20 - Текущий цвет вагона.',
+                ' 21 - История изменения цвета вагона.',
+                ' 22 - Классифицировать вагон.',
+                ' 23 - Указать тип двигателя поезда.',
                 BORDERLINE,
                 '  0 - Для выхода из программы.']
     messages.each { |item| puts item }
@@ -69,8 +76,6 @@ class Railway
   def create_station
     message = ['Введите название станции:']
     name = data_input(message).first
-
-    return if dublicate_name?(@stations, name)
 
     @stations << Station.new(name)
     info_created
@@ -149,7 +154,7 @@ class Railway
   end
 
   def attach_wagon
-    return if @trains.size.zero? || @wagons.size.zero?
+    return unless @trains.size.positive? && @wagons.size.positive?
 
     train = choose_a_train
 
@@ -159,16 +164,18 @@ class Railway
 
     train.attach_wagon(suitable_wagon)
     @wagons.delete(suitable_wagon)
+    info_created
   end
 
   def detach_wagon
-    return if @trains.size.zero?
+    return unless @trains.size.positive?
 
     train = choose_a_train
 
-    return if train.wagons.size.zero?
+    return unless train.wagons.size.positive?
 
     @wagons << train.detach_wagon
+    info_created
   end
 
   def selected_station_route
@@ -189,12 +196,16 @@ class Railway
   end
 
   def create_route
-    return if @stations.size < 2
+    return unless @stations.size >= 2
 
     choose_first_station
     first = selected_station_route
+    return unless @stations.include? first
+
     choose_last_station
     last = selected_station_route
+    return unless @stations.include? last
+
     @routes << Route.new(first, last)
     info_created
   rescue StandardError => e
@@ -227,6 +238,7 @@ class Railway
 
     message_name_station
     route.midway(selected_station_route)
+    info_created
   end
 
   def message_number_route_delete_station
@@ -238,10 +250,11 @@ class Railway
   end
 
   def delete_midway
-    return if @routes.size.zero? || @stations.size < 3
+    return unless @routes.size.positive? && @stations.size >= 3
 
     message_number_route_delete_station
     route = selected_route
+    return unless route.stations.size >= 3
 
     message_number_station_delete
     station = selected_station_route
@@ -249,6 +262,7 @@ class Railway
     return if station == (route.stations.first && route.stations.last)
 
     route.delete_midway(station)
+    info_created
   end
 
   def message_number_add_route
@@ -260,13 +274,14 @@ class Railway
   end
 
   def add_route_train
-    return if @trains.size.zero? || @routes.size.zero?
+    return unless @trains.size.positive? && @routes.size.positive?
 
     message_number_add_route
     train = choose_a_train
     message_number_route_train
     route = selected_route
     train.route(route)
+    info_created
   end
 
   def message_number_train_move_forwards
@@ -274,10 +289,11 @@ class Railway
   end
 
   def move_forwards
-    return if @trains.size.zero?
+    return unless @trains.size.positive?
 
     message_number_train_move_forwards
     choose_a_train.move_forwards
+    info_created
   end
 
   def message_number_train_move_backwards
@@ -285,10 +301,11 @@ class Railway
   end
 
   def move_backwards
-    return if @trains.size.zero?
+    return unless @trains.size.positive?
 
     message_number_train_move_backwards
     choose_a_train.move_backwards
+    info_created
   end
 
   def list_stations
@@ -300,7 +317,7 @@ class Railway
   end
 
   def take_the_place_wagon
-    return if @trains.size.zero?
+    return unless @trains.size.positive?
 
     train = choose_a_train
     train.wagons.each_with_index { |elem, index| puts "#{index + 1}. #{elem}" }
@@ -313,6 +330,92 @@ class Railway
       message_volume
       train.wagons[index].takes_volume(gets.chomp.to_i)
     end
+    info_created
+  end
+
+  def message_color
+    puts 'Выберите цвет:'
+  end
+
+  def choice_wagon
+    @wagons.each_with_index { |elem, index| puts "#{index + 1}. #{elem}" }
+    message = ['Выбрать вагон: ']
+    index = data_input(message).first.to_i - 1
+    @wagons[index]
+  end
+
+  def paint_the_wagon
+    return unless @wagons.size.positive?
+
+    wagon = choice_wagon
+    return unless @wagons.include? wagon
+
+    message_color
+    colors = { '1' => 'Чёрный', '2' => 'Зелёный', '3' => 'Коричневый' }
+    colors.each { |key, value| puts "Введите: #{key} -> #{value}" }
+    wagon.color = colors[gets.chomp]
+    info_created
+  end
+
+  def current_color_wagon
+    return unless @wagons.size.positive?
+
+    wagon = choice_wagon
+    return unless @wagons.include? wagon
+
+    puts "Текущий цвет вагона: #{wagon} - #{wagon.color}"
+  end
+
+  def history_colors_wagon
+    return unless @wagons.size.positive?
+
+    wagon = choice_wagon
+    return unless @wagons.include? wagon
+
+    puts "Исторя цветов вагона: #{wagon} - #{wagon.color_history}"
+  end
+
+  def message_class_pass_wagon
+    puts "Введите класс вагона ('1' - Первый класс, '2' - Второй, '3' - Третий)"
+  end
+
+  def add_class_wagon
+    return unless @wagons.size.positive?
+
+    wagon = choice_wagon
+    return unless @wagons.include? wagon
+
+    if wagon.type == 'pass'
+      return unless wagon.carriage_class.nil?
+
+      message_class_pass_wagon
+      classifier = gets.chomp.to_i
+      return unless classifier.positive? && classifier <= 3
+
+      wagon.carriage_class = classifier
+    else
+      return unless wagon.carriage_type.nil?
+
+      type = { '1' => 'Открытый', '2' => 'Крытый', '3' => 'Платформа' }
+      type.each { |key, value| puts "Выберите тип вагона: #{key} -> #{value}" }
+      classifier = type[gets.chomp.to_s]
+      wagon.carriage_type = classifier
+    end
+    info_created
+  end
+
+  def add_engine_type
+    return unless @trains.size.positive?
+
+    train = choose_a_train
+    return unless @trains.include? train
+
+    return unless train.engine_type.nil?
+
+    engine = { '1' => 'Паровой', '2' => 'Электро', '3' => 'Дизель' }
+    engine.each { |key, value| puts "Введите: #{key} -> #{value}" }
+    train.engine_type = engine[gets.chomp]
+    info_created
   end
 
   def message_list_wagons_train
@@ -320,7 +423,7 @@ class Railway
   end
 
   def list_wagons_train
-    return if @trains.size.zero?
+    return unless @trains.size.positive?
 
     message_list_wagons_train
 
@@ -338,7 +441,7 @@ class Railway
   end
 
   def list_trains_station
-    return if @stations.size.zero?
+    return unless @stations.size.positive?
 
     message_number_station_list_trains
 

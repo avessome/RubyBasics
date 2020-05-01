@@ -2,6 +2,10 @@
 
 # documentation comment
 class CargoWagon < Wagon
+  strong_attr_accessor :carriage_type, String
+
+  validate :capacity, :range
+
   def initialize(capacity)
     super 'cargo', capacity
   end

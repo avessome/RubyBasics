@@ -9,7 +9,6 @@ class Route
   attr_reader :stations
   def initialize(first, last)
     @stations = [first, last]
-    validate!
     register_instance
   end
 
@@ -25,18 +24,5 @@ class Route
 
   def list_stations
     @stations.each { |item| puts "#{item.name}, #{item}" }
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
-
-  private
-
-  def validate!
-    raise 'Станции одинаковые!' if @stations.first == @stations.last
   end
 end

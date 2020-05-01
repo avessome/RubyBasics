@@ -12,6 +12,8 @@ require_relative 'module_company'
 require_relative 'passenger_train'
 require_relative 'passenger_wagon'
 require_relative 'instance_counter'
+require_relative 'module_accessors'
+require_relative 'validation'
 
 BORDERLINE = '-' * 50
 NEWLINE = "\n" * 2
@@ -21,10 +23,6 @@ puts NEWLINE
 puts "Добро пожаловать в программу 'Железная дорога'"
 puts NEWLINE
 loop do
-  puts "stations: #{railway.stations}\n\n"
-  puts "trains: #{railway.trains}\n\n"
-  puts "wagons: #{railway.wagons}\n\n"
-  puts "routes: #{railway.routes}\n\n"
   puts NEWLINE
   railway.menu_items
 

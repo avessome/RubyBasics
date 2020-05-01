@@ -3,39 +3,43 @@
 # documentation comment
 require_relative 'instance_counter'
 require_relative 'module_company'
+require_relative 'module_accessors'
+require_relative 'validation'
 
 # documentation comment
 class Train
+  include Accessor
   include Company
   include InstanceCounter
+  include Validation
 
-  NUMBER_FORMAT = /^[a-z\d]{3}-*[a-z\d]{2}$/i.freeze
-  @trains = {}
+  @@trains = {}
 
   def self.find(name)
-    @trains[name]
+    @@trains[name]
   end
 
   attr_reader :name, :type, :wagons, :current_station, :current_speed
+
+  validate :name, :type, String
+  validate :name, :presence
+  validate :name, :format, /^[a-z\d]{3}-*[a-z\d]{2}$/i
+
+  strong_attr_accessor :engine_type, String
+
   def initialize(name, type)
-    @trains[name] = self
     @name = name.to_s
-    validate!
     @type = type
+    validate!
+
     @wagons = []
     @current_speed = 0
+    @@trains[name] = self
     register_instance
   end
 
   def list_wagons
     wagons.each_with_index { |wagon, index| yield(wagon, index) }
-  end
-
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
   end
 
   def attach_wagon(wagon)
@@ -108,11 +112,5 @@ class Train
     return unless @current_station != @route.stations.first
 
     @route.stations[current_index - 1]
-  end
-
-  private
-
-  def validate!
-    raise 'Ошибка! Не правильный формат номера!' if name !~ NUMBER_FORMAT
   end
 end

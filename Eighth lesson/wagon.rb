@@ -2,11 +2,19 @@
 
 # documentation comment
 require_relative 'module_company'
+require_relative 'module_accessors'
+require_relative 'validation'
 
 # documentation comment
 class Wagon
+  include Accessor
   include Company
+  include Validation
+
   attr_reader :type, :capacity, :free_capacity
+
+  attr_accessor_with_history :color
+
   def initialize(type, capacity)
     @capacity = capacity.to_i
     @type = type
@@ -14,17 +22,7 @@ class Wagon
     @free_capacity = @capacity
   end
 
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
-
-  protected
-
-  def validate!
-    raise 'Ошибка! Тип не указан!' if @type.nil? || @type.empty?
-    raise 'Ошибка! Вместимость должна быть больше 0!' unless @capacity.positive?
+  def loaded_capacity
+    @capacity - @free_capacity
   end
 end
